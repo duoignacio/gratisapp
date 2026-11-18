@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GratisApp – Simulación (Feria de Filosofías)</title>
+<style>
+  :root {
+    --bg: #eef3fb;
+    --card: #ffffff;
+    --ink: #0f1b33;
+    --muted: #5d6b85;
+    --blue: #2457f5;
+    --blue-dark: #1a42c4;
+    --sun: #ffc933;
+    --night: #0b1020;
+    --night-2: #151c35;
+    --alarm: #ff4d4d;
+    --line: #d5deee;
+    --font: "Avenir Next", "Segoe UI", "Trebuchet MS", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.45; }
+  button { font-family: inherit; }
+  :focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+  [hidden] { display: none !important; }
+
+  /* ---------- Pantalla 1: registro ---------- */
+  .wrap { max-width: 760px; margin: 0 auto; padding: 28px 20px 40px; }
+  .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .logo-mark { width: 46px; height: 46px; border-radius: 14px; background: var(--blue); display: grid; place-items: center; }
+  .logo-mark span { width: 20px; height: 20px; border-radius: 50%; background: var(--sun); display: block; }
+  .logo b { font-size: 30px; letter-spacing: -0.5px; }
+  .tag { color: var(--muted); margin: 0 0 22px; font-size: 18px; }
+  .card { background: var(--card); border-radius: 22px; padding: 26px; box-shadow: 0 10px 30px rgba(36, 87, 245, .12); }
+  h1 { font-size: 28px; margin: 0 0 6px; line-height: 1.15; }
+  .sub { margin: 0 0 16px; color: var(--muted); }
+  .terms {
+    height: 180px; overflow-y: auto; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px;
+    font-size: 12.5px; line-height: 1.5; color: #44516b; background: #fafcff;
+  }
+  .terms.big { height: 52vh; }
+  .terms h3 { font-size: 12.5px; margin: 12px 0 2px; color: var(--ink); }
+  .terms h3:first-child { margin-top: 0; }
+  .terms p { margin: 0 0 6px; }
+  .checks { margin: 16px 0 6px; display: grid; gap: 8px; font-size: 15px; }
+  .checks label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+  .checks input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--blue); }
+  .accept {
+    margin-top: 14px; width: 100%; padding: 20px 18px; font-size: 22px; font-weight: 800; border: 0; border-radius: 16px;
+    background: var(--blue); color: #fff; cursor: pointer; box-shadow: 0 8px 0 var(--blue-dark); transition: transform .08s, box-shadow .08s;
+  }
+  .accept:hover { background: #2f63ff; }
+  .accept:active { transform: translateY(6px); box-shadow: 0 2px 0 var(--blue-dark); }
+  .readlink {
+    display: block; margin: 16px auto 0; background: none; border: 0; padding: 4px; font-size: 11px; color: #9aa5ba;
+    text-decoration: underline; cursor: pointer;
+  }
+  .foot { margin-top: 18px; font-size: 12px; color: var(--muted); text-align: center; }
+
+  /* ---------- Pantalla 2: revelación ---------- */
+  #reveal { background: var(--night); color: #e8ecf8; min-height: 100vh; }
+  .rwrap { max-width: 980px; margin: 0 auto; padding: 24px 20px 40px; }
+  .eye-box { display: flex; justify-content: center; margin: 4px 0 6px; }
+  .eye-box svg { width: min(360px, 72vw); height: auto; }
+  #reveal h2 { text-align: center; font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 0 0 8px; }
+  .lead { text-align: center; color: #aab4d0; max-width: 640px; margin: 0 auto 22px; font-size: 18px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .stat { background: var(--night-2); border-radius: 14px; padding: 14px 16px; }
+  .stat b { display: block; font-size: 30px; color: var(--sun); }
+  .stat span { color: #aab4d0; font-size: 14px; }
+  .perms { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .perm { background: var(--night-2); border-radius: 14px; padding: 16px; border-top: 4px solid var(--alarm); }
+  .perm h3 { margin: 0 0 6px; font-size: 18px; }
+  .perm p { margin: 0 0 8px; color: #c6cde2; font-size: 14px; }
+  .perm small { color: #8a95b5; font-size: 12px; }
+  .ask { text-align: center; background: var(--night-2); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
+  .ask p { margin: 0 0 6px; font-size: 20px; }
+  .ask .step { color: var(--sun); font-weight: 700; }
+  .actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .btn2 { padding: 14px 22px; font-size: 16px; font-weight: 700; border-radius: 12px; border: 2px solid #3a4670; background: transparent; color: #e8ecf8; cursor: pointer; }
+  .btn2:hover { border-color: var(--sun); }
+  .counter { text-align: center; margin-top: 16px; color: #8a95b5; font-size: 13px; }
+  .sim { position: fixed; right: 10px; bottom: 8px; font-size: 11px; color: #7c88a8; }
+  @media (prefers-reduced-motion: no-preference) {
+    #reveal:not([hidden]) .eye-box { animation: appear .5s ease-out; }
+    @keyframes appear { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
+  }
+</style>
+</head>
+<body>
+
+<main id="signup">
+  <div class="wrap">
+    <div class="logo"><div class="logo-mark"><span></span></div><b>GratisApp</b></div>
+    <p class="tag">Todo lo bueno es gratis.</p>
+    <div class="card">
+      <h1>Creá tu cuenta gratis</h1>
+      <p class="sub">Un último paso: aceptá los términos y empezá a usar GratisApp.</p>
+      <div class="terms" id="terms" tabindex="0" aria-label="Términos y condiciones"></div>
+      <div class="checks">
+        <label><input type="checkbox" checked> Acepto los Términos y Condiciones y la Política de Privacidad</label>
+        <label><input type="checkbox" checked> Quiero recibir ofertas y novedades de nuestros 322 socios comerciales</label>
+        <label><input type="checkbox" checked> Mejorar mi experiencia con anuncios personalizados</label>
+      </div>
+      <button class="accept" id="accept">Aceptar todo y continuar</button>
+      <button class="readlink" id="readlink">Leer los términos completos (86 páginas)</button>
+    </div>
+    <p class="foot">Simulación para la Feria de Filosofías. GratisApp no existe.</p>
+  </div>
+</main>
+
+<main id="reveal" hidden>
+  <div class="rwrap">
+    <div class="eye-box" aria-hidden="true">
+      <svg viewBox="0 0 400 220" id="eye">
+        <defs><clipPath id="lid"><path d="M10 110 Q200 -10 390 110 Q200 230 10 110 Z"/></clipPath></defs>
+        <path d="M10 110 Q200 -10 390 110 Q200 230 10 110 Z" fill="#f4f6fc"/>
+        <g clip-path="url(#lid)">
+          <g id="iris">
+            <circle cx="200" cy="110" r="62" fill="#ff4d4d"/>
+            <circle cx="200" cy="110" r="38" fill="#0b1020"/>
+            <circle cx="184" cy="92" r="9" fill="#fff" opacity=".85"/>
+          </g>
+        </g>
+        <path d="M10 110 Q200 -10 390 110 Q200 230 10 110 Z" fill="none" stroke="#0b1020" stroke-width="6"/>
+      </svg>
+    </div>
+    <h2>Aceptaste. Ahora te vemos.</h2>
+    <p class="lead" id="lead"></p>
+    <div class="stats">
+      <div class="stat"><b id="s-time">0 s</b><span>tardaste en aceptar</span></div>
+      <div class="stat"><b id="s-read">0%</b><span>de los términos llegaste a leer</span></div>
+      <div class="stat"><b>3 h</b><span>llevaría leerlos completos (86 páginas)</span></div>
+    </div>
+    <div class="perms" id="perms"></div>
+    <div class="ask">
+      <p><span class="step">1.</span> Tomá las 5 tarjetas y pegalas en el panóptico.</p>
+      <p><span class="step">2.</span> ¿Elegiste o solo aceptaste? Anotalo en tu pasaporte filosófico.</p>
+    </div>
+    <div class="actions"><button class="btn2" id="reset">Nuevo visitante</button></div>
+    <p class="counter" id="counter"></p>
+  </div>
+  <div class="sim">Simulación. GratisApp no existe.</div>
+</main>
+
+<script>
+(function () {
+  /* ---------- Términos y condiciones ---------- */
+  var filler = [
+    "La aceptación de estos Términos implica la conformidad plena del usuario con las condiciones vigentes y con las que se incorporen en el futuro, sin necesidad de notificación previa.",
+    "GratisApp otorga al usuario una licencia limitada, revocable, no exclusiva e intransferible para utilizar el servicio, sujeta a las restricciones aquí previstas.",
+    "El servicio se presta \"tal como está\", sin garantías de ninguna clase, expresas o implícitas, respecto de su disponibilidad, exactitud o idoneidad.",
+    "GratisApp podrá modificar, suspender o discontinuar total o parcialmente el servicio en cualquier momento y sin responsabilidad alguna.",
+    "El usuario es el único responsable de la confidencialidad de sus credenciales y de toda actividad realizada desde su cuenta.",
+    "Toda controversia se someterá a los tribunales competentes de la jurisdicción que GratisApp determine, con renuncia a cualquier otro fuero."
+  ];
+  var key = {
+    "9.2": ["Ubicación", "Para brindarte una mejor experiencia, GratisApp podrá registrar tu ubicación de forma continua, incluso cuando la aplicación no esté en uso."],
+    "11.4": ["Contactos", "El usuario autoriza el acceso a su agenda de contactos y a los datos de las personas que figuran en ella."],
+    "14.3": ["Micrófono", "GratisApp podrá activar el micrófono del dispositivo para mejorar la calidad del servicio y de los anuncios."],
+    "17.1": ["Historial", "Se registrará el historial de navegación y de búsqueda del usuario, aun fuera de GratisApp."],
+    "19.6": ["Iris", "El usuario cede una licencia perpetua, mundial y transferible sobre sus datos biométricos (por ejemplo, el iris), a cambio de acceso gratuito al servicio."]
+  };
+  var titles = ["Aceptación", "Licencia de uso", "Garantías", "Modificaciones", "Cuenta y credenciales", "Jurisdicción", "Propiedad intelectual", "Contenido del usuario", "Datos y privacidad", "Terceros", "Comunicaciones", "Publicidad", "Seguridad", "Menores", "Cesión", "Responsabilidad", "Registros", "Indemnidad", "Datos sensibles", "Vigencia"];
+  var html = "";
+  for (var n = 1; n <= 20; n++) {
+    html += "<h3>" + n + ". " + titles[n - 1] + "</h3>";
+    for (var m = 1; m <= 6; m++) {
+      var id = n + "." + m;
+      var text = key[id] ? key[id][1] : filler[(n + m) % filler.length];
+      html += "<p>" + id + " " + text + "</p>";
+    }
+  }
+  var termsEl = document.getElementById("terms");
+  termsEl.innerHTML = html;
+
+  /* ---------- Estado ---------- */
+  var t0 = Date.now();
+  var maxRead = 0;
+  var memory = { total: 0, read: 0 };
+
+  function load() {
+    try {
+      var a = parseInt(localStorage.getItem("gratisapp_total") || "0", 10);
+      var b = parseInt(localStorage.getItem("gratisapp_read") || "0", 10);
+      if (!isNaN(a)) memory.total = a;
+      if (!isNaN(b)) memory.read = b;
+    } catch (e) {}
+  }
+  function save() {
+    try {
+      localStorage.setItem("gratisapp_total", String(memory.total));
+      localStorage.setItem("gratisapp_read", String(memory.read));
+    } catch (e) {}
+  }
+  load();
+
+  termsEl.addEventListener("scroll", function () {
+    var max = termsEl.scrollHeight - termsEl.clientHeight;
+    if (max > 0) maxRead = Math.max(maxRead, Math.min(1, termsEl.scrollTop / max));
+  });
+
+  document.getElementById("readlink").addEventListener("click", function () {
+    termsEl.classList.toggle("big");
+    termsEl.focus();
+  });
+
+  /* ---------- Revelación ---------- */
+  function showReveal() {
+    var secs = Math.max(1, Math.round((Date.now() - t0) / 1000));
+    var pct = Math.round(maxRead * 100);
+    document.getElementById("s-time").textContent = secs + " s";
+    document.getElementById("s-read").textContent = pct + "%";
+    document.getElementById("lead").textContent =
+      "Nadie te obligó. Pero acabás de entregar estas cinco cosas, y estaban escondidas en los términos.";
+
+    var perms = [
+      ["9.2", "Sabemos dónde dormís, dónde trabajás y por dónde te movés."],
+      ["11.4", "Tenemos a tus amigos y familiares, que nunca aceptaron nada."],
+      ["14.3", "Podemos escuchar lo que pasa a tu alrededor."],
+      ["17.1", "Vemos lo que buscás y lo que mirás, aun fuera de la app."],
+      ["19.6", "Tu iris es nuestro. No se puede cambiar como una contraseña."]
+    ];
+    var out = "";
+    perms.forEach(function (p) {
+      out += '<div class="perm"><h3>' + key[p[0]][0] + "</h3><p>" + p[1] + "</p><small>Cláusula " + p[0] + "</small></div>";
+    });
+    document.getElementById("perms").innerHTML = out;
+
+    memory.total += 1;
+    if (maxRead >= 0.5) memory.read += 1;
+    save();
+    document.getElementById("counter").textContent =
+      "En este stand: " + memory.total + (memory.total === 1 ? " persona aceptó" : " personas aceptaron") +
+      ". Leyeron más de la mitad de los términos: " + memory.read + ".";
+
+    document.getElementById("signup").hidden = true;
+    document.getElementById("reveal").hidden = false;
+    window.scrollTo(0, 0);
+    document.getElementById("reset").focus();
+  }
+
+  function reset() {
+    termsEl.scrollTop = 0;
+    termsEl.classList.remove("big");
+    maxRead = 0;
+    t0 = Date.now();
+    document.getElementById("reveal").hidden = true;
+    document.getElementById("signup").hidden = false;
+    var boxes = document.querySelectorAll(".checks input");
+    for (var i = 0; i < boxes.length; i++) boxes[i].checked = true;
+    window.scrollTo(0, 0);
+    document.getElementById("accept").focus();
+  }
+
+  document.getElementById("accept").addEventListener("click", showReveal);
+  document.getElementById("reset").addEventListener("click", reset);
+  document.addEventListener("keydown", function (e) {
+    if ((e.key === "r" || e.key === "R") && !document.getElementById("reveal").hidden) reset();
+  });
+
+  /* ---------- Ojo que sigue al puntero ---------- */
+  var eye = document.getElementById("eye");
+  var iris = document.getElementById("iris");
+  function look(x, y) {
+    var r = eye.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var dx = x - cx, dy = y - cy;
+    var d = Math.sqrt(dx * dx + dy * dy) || 1;
+    var k = Math.min(1, d / 300);
+    iris.setAttribute("transform", "translate(" + (dx / d) * 62 * k + "," + (dy / d) * 24 * k + ")");
+  }
+  document.addEventListener("mousemove", function (e) { look(e.clientX, e.clientY); });
+  document.addEventListener("touchmove", function (e) {
+    if (e.touches[0]) look(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>
